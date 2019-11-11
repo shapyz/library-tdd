@@ -29,9 +29,10 @@ class BookReservationTest extends TestCase
 
         //When
         $response = $this->post('/books', $books);
+        $book = Book::first();
 
         //Then
-        $response->assertOk();
+        $response->assertRedirect('/books/'.$book->id);
         $this->assertCount(1, Book::all());
     }
 
@@ -97,7 +98,31 @@ class BookReservationTest extends TestCase
 
         // then
         $this->assertEquals('Cool Book Title v2', Book::first()->title);
+        $response->assertRedirect('/books/'.$book->id);
 
+    }
+
+    /**
+     * @test
+     */
+    public function a_book_can_be_deleted()
+    {
+        // Given 
+        $this->withoutExceptionHandling();
+
+        $books = [
+            'title' =>  'Cool Book Title',
+            'author'    =>  'ashiraf' 
+        ];
+
+        // When
+        $this->post('/books', $books);
+        $book = Book::first();
+        $response = $this->delete('/books/'.$book->id);
+
+        // Then
+        $this->assertCount(0, Book::all());
+        $response->assertRedirect('/books');
 
     }
 }
