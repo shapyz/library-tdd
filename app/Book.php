@@ -13,4 +13,12 @@ class Book extends Model
             'title',
             'author'
     ];
+
+    /**
+     * 
+     */
+    public function path()
+    {
+        return ('/books/'.$this->id);
+    }
 }
