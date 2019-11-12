@@ -3,6 +3,7 @@
 namespace Tests\Feature;
 
 use App\Book;
+use App\Author;
 use Tests\TestCase;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 
@@ -24,11 +25,11 @@ class BookReservationTest extends TestCase
         $this->withoutExceptionHandling();
         $books = [
             'title' =>  'Coll book Title',
-            'author'    =>  'ashiraf' 
+            'author_id'    =>  'ashiraf' 
         ];
 
         //When
-        $response = $this->post('/books', $books);
+        $response = $this->post('/books', $this->data());
         $book = Book::first();
 
         //Then
@@ -61,16 +62,15 @@ class BookReservationTest extends TestCase
     public function an_author_is_required()
     {
         // Given 
-        $books = [
-            'title' =>  'Cool Book Title',
-            'author'    =>  '' 
-        ];
+        $books = $this->data();
 
         // When
-        $response = $this->post('/books', $books);
+        $response = $this->post(
+            '/books', 
+            array_merge($books, ['author_id' =>  '']));
 
         //Then
-        $response->assertSessionHasErrors('author');
+        $response->assertSessionHasErrors('author_id');
     }
 
     /**
@@ -81,14 +81,10 @@ class BookReservationTest extends TestCase
         // Given 
         $this->withoutExceptionHandling();
 
-        $books = [
-            'title' =>  'Cool Book Title',
-            'author'    =>  'ashiraf' 
-        ];
-        $bookToUpdate = [
+        $books = $this->data();
+        $bookToUpdate = array_merge($this->data(),[
             'title' =>  'Cool Book Title v2',
-            'author'    =>  'ashiraf' 
-        ];
+        ]);
 
         // When
         $this->post('/books', $books);
@@ -110,10 +106,7 @@ class BookReservationTest extends TestCase
         // Given 
         $this->withoutExceptionHandling();
 
-        $books = [
-            'title' =>  'Cool Book Title',
-            'author'    =>  'ashiraf' 
-        ];
+        $books = $this->data();
 
         // When
         $this->post('/books', $books);
@@ -124,5 +117,31 @@ class BookReservationTest extends TestCase
         $this->assertCount(0, Book::all());
         $response->assertRedirect('/books');
 
+    }
+
+    /** @test */
+    function a_new_author_is_automatically_added()
+    {
+        $this->withoutExceptionHandling();
+
+       // Given
+        $book = $this->data();
+
+       // When
+       $this->post('/books',$book);
+       $book = Book::first();
+       $author = Author::first();
+
+       // Then
+       $this->assertEquals($author->id, $book->author_id);
+       $this->assertCount(1, Author::all());
+    }
+
+    private function data()
+    {
+        return [
+            'title' =>  'Cool Book Title',
+            'author_id' =>  'Ashiraf Hussein'
+        ];
     }
 }
