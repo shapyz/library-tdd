@@ -2,6 +2,7 @@
 
 namespace App;
 
+use App\Author;
 use Illuminate\Database\Eloquent\Model;
 
 class Book extends Model
@@ -9,10 +10,7 @@ class Book extends Model
     /**
      * Fillables
      */
-    protected $fillable = [
-            'title',
-            'author'
-    ];
+    protected $guarded = [];
 
     /**
      * 
@@ -20,5 +18,12 @@ class Book extends Model
     public function path()
     {
         return ('/books/'.$this->id);
+    }
+
+    function setAuthorIdAttribute($author)
+    {
+        $this->attributes['author_id'] = (Author::firstOrCreate([
+            'name' =>  $author,
+        ]))->id;
     }
 }
