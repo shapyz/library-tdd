@@ -7,7 +7,7 @@ use App\Author;
 use Tests\TestCase;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 
-class BookReservationTest extends TestCase
+class BookManagementTest extends TestCase
 {
     use RefreshDatabase;
     protected function setUp(): void
@@ -25,7 +25,7 @@ class BookReservationTest extends TestCase
         $this->withoutExceptionHandling();
         $books = [
             'title' =>  'Coll book Title',
-            'author_id'    =>  'ashiraf' 
+            'author_id'    =>  'ashiraf'
         ];
 
         //When
@@ -42,10 +42,10 @@ class BookReservationTest extends TestCase
      */
     public function a_title_is_required()
     {
-        // Given 
+        // Given
         $books = [
             'title' =>  '',
-            'author'    =>  'ashiraf' 
+            'author'    =>  'ashiraf'
         ];
 
         // When
@@ -61,12 +61,12 @@ class BookReservationTest extends TestCase
      */
     public function an_author_is_required()
     {
-        // Given 
+        // Given
         $books = $this->data();
 
         // When
         $response = $this->post(
-            '/books', 
+            '/books',
             array_merge($books, ['author_id' =>  '']));
 
         //Then
@@ -78,7 +78,7 @@ class BookReservationTest extends TestCase
      */
     public function a_book_can_be_updated()
     {
-        // Given 
+        // Given
         $this->withoutExceptionHandling();
 
         $books = $this->data();
@@ -103,7 +103,7 @@ class BookReservationTest extends TestCase
      */
     public function a_book_can_be_deleted()
     {
-        // Given 
+        // Given
         $this->withoutExceptionHandling();
 
         $books = $this->data();
